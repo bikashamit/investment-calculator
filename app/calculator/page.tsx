@@ -220,14 +220,7 @@ export default function CalculatorPage() {
 
       <div className="max-w-3xl mx-auto p-6">
         <h1 className="text-3xl font-bold mb-6">Traditional Interest Calculator (Calendar Year Compounding)</h1>
-        <p className="mb-4 text-gray-600">
-          Interest is calculated per calendar month. Full months = one month’s interest. Partial months use actual days / 30, with days counted as:<br/>
-          • Start month: days = (days in month − start day)  (you pay from the day after borrowing to month end)<br/>
-          • End month: days = end day  (you pay from 1st to settlement day)<br/>
-          • Same month: days = end day − start day<br/>
-          Interest is added to principal (compounded) at the end of each calendar year (Dec 31).<br/>
-          <span className="font-semibold">Every month from start to end is listed – December is always included.</span>
-        </p>
+        
 
         {/* Input form – hidden when printing */}
         <div className="no-print bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
