@@ -18,6 +18,14 @@ function daysInPartialPeriod(start: Date, end: Date): number {
   return end.getDate() - start.getDate();
 }
 
+function daysInStartPartial(start: Date, monthEnd: Date): number {
+  return monthEnd.getDate() - start.getDate();
+}
+
+function daysInEndPartial(monthStart: Date, end: Date): number {
+  return end.getDate();
+}
+
 // ---------- Generate month-by-month breakdown for a given period (using a fixed principal) ----------
 interface MonthEntry {
   year: number;
@@ -55,18 +63,23 @@ function generateMonthEntriesForPeriod(
       isFullMonth = true;
       interest = principal * monthlyRate;
     } else {
-      // Partial month
+      // Partial month – interest = principal * monthlyRate * (days in partial period / actual days in that month)
       if (current.getDate() === 1) {
         // Starting on 1st but ending before last day (end month)
-        days = daysInPartialPeriod(current, monthEnd);
+        days = daysInEndPartial(current, monthEnd);
+        const monthDays = getDaysInMonth(endDate); // endDate is in this month
+        interest = principal * monthlyRate * (days / monthDays);
       } else if (monthEnd.getDate() === lastDayOfMonth.getDate()) {
         // Starting after 1st but ending on last day (start month)
-        days = daysInPartialPeriod(current, monthEnd);
+        days = daysInStartPartial(current, monthEnd);
+        const monthDays = getDaysInMonth(current);
+        interest = principal * monthlyRate * (days / monthDays);
       } else {
-        // Both start and end within the same month (shouldn't happen because we break early)
+        // Both start and end within the same month (only possible if periodStart and periodEnd are in same month)
         days = daysInPartialPeriod(current, monthEnd);
+        const monthDays = getDaysInMonth(current);
+        interest = principal * monthlyRate * (days / monthDays);
       }
-      interest = principal * monthlyRate * (days / 30);
     }
 
     entries.push({
@@ -273,7 +286,7 @@ export default function CalculatorPage() {
 
       <div className="max-w-3xl mx-auto p-6">
         <h1 className="text-3xl font-bold mb-6">Traditional Interest Calculator (Calendar Year Compounding)</h1>
-       
+        
 
         {/* Input form – hidden when printing */}
         <div className="no-print bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
